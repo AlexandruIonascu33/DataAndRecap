@@ -1,296 +1,228 @@
 
-# README – Using `try`, `except`, `else`, `finally` and `raise` in Python
+# Histogram Exercise – Stress Scores (Python, pandas, matplotlib)
 
-This document explains the basic concepts of exception handling in Python and then walks step by step through the logic of solving the four exercises you have, **without** showing the full solutions.
+This exercise introduces psychology students to **basic data visualization in Python** using a simple **histogram** of stress scores stored in an Excel file.  
+The activity is designed for use in **Jupyter Notebooks** (e.g., GitHub Codespaces).
 
----
 
-## 1. What are exceptions?
 
-An *exception* is an error that occurs during the execution of a program.  
-Examples:
+## 1. Files in this exercise
 
-- Trying to divide by zero
-- Converting a non-numeric string to an integer
-- Opening a file that does not exist
+You should have at least the following files in the same folder:
 
-If an exception is not handled, the program stops with a traceback.  
-Python gives you tools (`try`, `except`, `else`, `finally`, `raise`) to handle these situations gracefully.
+- `Stress.xlsx`  
+  A small Excel file with at least the following columns, for example:
 
----
+  | participant | stress |
+  |------------|--------|
+  | 1          | 5      |
+  | 2          | 6      |
+  | 3          | 4      |
+  | 4          | 8      |
+  | 5          | 9      |
+  | 6          | 7      |
 
-## 2. `try` and `except`
-
-### `try`
-You put code that **might fail** inside a `try` block.  
-If everything runs without errors, Python skips the `except` blocks.
-
-### `except`
-You put code that **handles errors** inside one or more `except` blocks.  
-Each `except` can handle a specific type of exception (e.g. `ValueError`, `ZeroDivisionError`).
-
-**Typical pattern:**
-- `try`: do something risky (division, file open, type conversion).
-- `except`: catch and handle specific errors.
+- `exercitiu_histograma.ipynb`  
+  A Jupyter notebook where you:
+  - load the data from `Stress.xlsx`
+  - display the first rows
+  - draw a **basic histogram**
+  - **customize** the histogram based on the exercise instructions.
 
 ---
 
-## 3. `else` with `try`
+## 2. Requirements
 
-The `else` block is executed **only if no exception was raised** in the `try` block.
+You will need the following Python packages:
 
-This is useful when:
-- You want to separate “error handling” (`except`) from “normal success behavior” (`else`).
-- Example pattern:
-  - `try`: attempt something (like converting input).
-  - `except`: handle invalid input.
-  - `else`: executed only if input is valid, e.g. print a success message or continue processing.
+- `pandas`
+- `matplotlib`
+- `openpyxl` (for reading Excel files)
 
----
-
-## 4. `finally`
-
-The `finally` block is executed **no matter what happens**:
-
-- runs if there was no error
-- runs if there was an error that was caught
-- even runs if you `return` inside `try`/`except` (the `finally` happens before the actual return)
-
-Typical uses:
-
-- closing a file or database connection
-- printing a “cleanup” or “operation finished” message
-- freeing resources
-
----
-
-## 5. `raise`
-
-`raise` is used to **manually trigger an exception**.
-
-You use it when:
-
-- You detect an invalid situation yourself (e.g. negative age, invalid grade).
-- You want to stop execution and signal that something is wrong.
-- You want to create **custom error messages**.
-
-Example form (conceptual, not the full solution):
+If you are working in Codespaces or another Jupyter environment, you can install them with:
 
 ```python
-raise ValueError("Age must be a positive integer!")
+!pip install pandas matplotlib openpyxl
 ````
 
-You can then catch this error in an `except` block elsewhere.
+Run this in a notebook cell **before** importing the libraries.
 
 ---
 
-## 6. Further reading
+## 3. Step-by-step solution
 
-For more details and examples on `try`/`except` in Python, you can check:
+### 3.1. Import the libraries
 
-[W3Schools – Python Try Except](https://www.w3schools.com/python/python_try_except.asp)
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
 
----
+%matplotlib inline
+```
 
-## 7. Step-by-step: How to solve the exercises (without showing solutions)
-
-Below are **guides** for solving each exercise using the concepts above. They describe the algorithm and structure, but **do not include the final code**.
-
----
-
-### Exercise 1 – Safe division with `try / except / else / finally`
-
-**Goal:**
-Ask the user for two numbers, divide them, handle invalid input and division by zero, and always print a final message.
-
-**Steps to solve:**
-
-1. **Read inputs:**
-
-   * Ask the user for a numerator.
-   * Ask the user for a denominator.
-   * Place these lines inside a `try` block.
-
-2. **Convert to numbers:**
-
-   * Convert both inputs to `float` inside the `try` block.
-   * This is where a `ValueError` might occur if the user types text.
-
-3. **Perform the division:**
-
-   * Still inside the `try` block, divide numerator by denominator.
-   * This is where a `ZeroDivisionError` can occur if the denominator is `0`.
-
-4. **Handle input errors:**
-
-   * Add an `except ValueError` block:
-
-     * Print a message telling the user they must enter numeric values.
-
-5. **Handle division by zero:**
-
-   * Add an `except ZeroDivisionError` block:
-
-     * Print a message that division by zero is not allowed.
-
-6. **Use `else` for successful division:**
-
-   * In the `else` block:
-
-     * Print that the division was successful.
-     * Print the result calculated earlier.
-
-7. **Use `finally`:**
-
-   * In the `finally` block:
-
-     * Print `"Operation finished."` regardless of success or error.
+`%matplotlib inline` ensures that all plots are shown inside the notebook.
 
 ---
 
-### Exercise 2 – Using `else` after a successful `try`
+### 3.2. Load the Excel file and inspect the data
 
-**Goal:**
-Ask the user for an integer, confirm success in `else`, and always print a finishing message in `finally`.
+```python
+# Read the data from the Excel file "Stress.xlsx".
+# Make sure the file is in the same folder as this notebook.
+df = pd.read_excel("Stress.xlsx")
 
-**Steps to solve:**
+print("First rows of the file:")
+df.head()
+```
 
-1. **Read input in `try`:**
-
-   * Ask the user to “Enter an integer”.
-   * Convert the input to `int` inside the `try` block.
-
-2. **Handle invalid integers:**
-
-   * Add an `except ValueError`:
-
-     * Print a message that the input is not a valid integer.
-
-3. **Use `else` for success:**
-
-   * In the `else` block:
-
-     * Print `"Conversion successful!"` if no exception occurred.
-
-4. **Use `finally`:**
-
-   * In the `finally` block:
-
-     * Print `"Attempt finished."` so it always appears at the end.
+You should see a small table with at least the columns `participant` and `stress`.
 
 ---
 
-### Exercise 3 – Using `raise` to create a custom error (`check_age`)
+### 3.3. Extract the stress scores and plot a basic histogram
 
-**Goal:**
-Create a function `check_age(age)` that ensures `age` is a positive integer, raises a `ValueError` otherwise, and then use it inside a `try` block when reading user input.
+```python
+# Extract the column with stress scores.
+stress_values = df["stress"]
 
-**Steps to solve:**
+# STEP 1: basic histogram (already working)
+plt.hist(stress_values)
+plt.show()
+```
 
-#### Part A – The `check_age` function
-
-1. **Define the function:**
-
-   * Create a function that takes one parameter: `age`.
-
-2. **Check that `age` is an integer:**
-
-   * Inside the function, verify that `age` is of type `int`.
-   * You can use an `isinstance` check or assume the caller has already converted the input to `int`.
-
-3. **Check positivity:**
-
-   * If `age` is less than or equal to zero:
-
-     * Use `raise ValueError("Age must be a positive integer!")`.
-
-4. **Return on success:**
-
-   * If all checks pass:
-
-     * Return `True` (or any indication that the age is valid).
-
-#### Part B – Using `check_age` with user input
-
-1. **Use a `try` block:**
-
-   * Ask the user to “Enter your age”.
-   * Convert the input to `int` inside the `try` block (this can raise `ValueError` itself).
-
-2. **Call `check_age`:**
-
-   * Still in the `try` block:
-
-     * Call `check_age` with the integer you obtained.
-     * If it returns successfully, print `"Age accepted."`.
-
-3. **Handle errors:**
-
-   * Use `except ValueError` to catch:
-
-     * conversion errors (from invalid input), and
-     * the custom error from `check_age`.
-   * Print the error message (e.g. using the exception object).
+At this stage you already have a **working** histogram, but it is very minimal.
 
 ---
 
-### Exercise 4 – Original example: `read_input(prompt, low, high)`
+## 4. The assignment: customize the histogram
 
-**Goal:**
-Write a function that repeatedly asks the user for a number until they enter an integer within a given range. It uses `try/except` for conversion errors and prints a message in `finally` at each attempt.
+Your task is to **improve** the histogram so it becomes clearer and more informative.
+The exercise can be guided in the notebook with comments like:
 
-**Steps to solve:**
+```python
+# EXERCISE: customize the histogram using the instructions below.
+#
+# 1) Change the number of bins in the histogram.
+#    - Hint: use an argument called "bins" in the function plt.hist(...)
+#
+# 2) Add a meaningful title to the histogram.
+#    - Hint: use plt.title("your text here")
+#
+# 3) Add labels for the X and Y axes.
+#    - Hint: plt.xlabel("..."), plt.ylabel("...")
+#
+# 4) (Optional) Change the color of the bars.
+#    - Hint: use the argument "color" in plt.hist(...)
+#
+# After you make your changes, run the code again and observe the differences.
+#
+# Write your customized version of the histogram below this comment.
+```
 
-1. **Define the function:**
+---
 
-   * Create a function with three parameters: `prompt`, `low`, and `high`.
+## 5. Example final solution
 
-2. **Use an infinite loop:**
+Below is one possible solution that satisfies all the requirements.
+You do **not** have to use exactly the same text or colors, but the structure should be similar.
 
-   * Inside the function, use a `while True:` loop to keep asking until the user inputs a valid value.
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
 
-3. **Place input and conversion in `try`:**
+%matplotlib inline
 
-   * Inside the loop:
+# Read the data
+df = pd.read_excel("Stress.xlsx")
+stress_values = df["stress"]
 
-     * In the `try` block:
+print("First rows of the file:")
+print(df.head())
 
-       * Ask the user for input using `prompt`.
-       * Convert the received string to an `int`.
+# Customized histogram
+plt.hist(
+    stress_values,
+    bins=5,          # 1) set the number of bins
+    color="skyblue"  # 4) optional: change the bar color
+)
 
-4. **Check the range:**
+# 2) title
+plt.title("Distribution of Stress Scores")
 
-   * Still inside the `try` block:
+# 3) axis labels
+plt.xlabel("Stress score")
+plt.ylabel("Number of participants")
 
-     * If the number is **less than `low` or greater than `high`**:
+plt.show()
+```
 
-       * Print a message like
-         `"You must type in an integer between low and high"`.
-       * Use `continue` to go to the next iteration of the loop.
+You can adjust:
 
-5. **Handle invalid integers:**
+* `bins` (e.g., 5, 10, or other values) to change how detailed the histogram is;
+* `color` (e.g., `"skyblue"`, `"lightgreen"`, `"orange"`, etc.);
+* the title and labels to match your own wording.
 
-   * Add an `except ValueError` block:
+---
 
-     * Print the same error message about the required integer range.
+## 6. Other example plots you can try
 
-6. **Use `else` or direct `return`:**
+Once you are comfortable with histograms, you can experiment with other simple plots using the same or similar data.
 
-   * In the `else` block (or after `try/except` if you prefer):
+### 6.1. Boxplot (box-and-whisker plot)
 
-     * If the number is valid (and within the range), **return** it.
-     * Returning exits both the loop and the function.
+Shows the distribution of stress scores (median, quartiles, potential outliers):
 
-7. **Use `finally`:**
+```python
+plt.boxplot(stress_values)
+plt.title("Boxplot of Stress Scores")
+plt.ylabel("Stress score")
+plt.show()
+```
 
-   * Add a `finally` block:
+### 6.2. Line plot (e.g., stress by participant index)
 
-     * Print `"Attempt processed."` each time the user enters something, regardless of success or error.
+Useful if you want to see how scores change across participants:
 
-8. **Outside the function:**
+```python
+plt.plot(stress_values)
+plt.title("Stress Score by Participant Index")
+plt.xlabel("Participant index")
+plt.ylabel("Stress score")
+plt.show()
+```
 
-   * Call the function with appropriate arguments (e.g. prompt and bounds).
-   * Store the return value in a variable.
-   * Print the final accepted number.
+### 6.3. Scatter plot (if you have a second numeric variable)
 
+If your Excel file also contains, for example, `sleep_hours`, you can show the relationship between stress and sleep:
 
+```python
+sleep_values = df["sleep_hours"]
+
+plt.scatter(sleep_values, stress_values)
+plt.title("Stress vs. Sleep Hours")
+plt.xlabel("Sleep hours")
+plt.ylabel("Stress score")
+plt.show()
+```
+
+---
+
+## 7. Useful links and resources
+
+For students who want to explore more:
+
+* Official Matplotlib tutorials (basic plotting, histograms, etc.):
+  [https://matplotlib.org/stable/tutorials/index.html](https://matplotlib.org/stable/tutorials/index.html)
+
+* Matplotlib gallery – many examples of plots with source code:
+  [https://matplotlib.org/stable/gallery/index.html](https://matplotlib.org/stable/gallery/index.html)
+
+* pandas visualization overview (plotting directly from DataFrames/Series):
+  [https://pandas.pydata.org/docs/user_guide/visualization.html](https://pandas.pydata.org/docs/user_guide/visualization.html)
+
+* A gentle introduction to histograms in data analysis (conceptual explanation):
+  [https://en.wikipedia.org/wiki/Histogram](https://en.wikipedia.org/wiki/Histogram)
+
+These resources are optional, but they can help you better understand how to create and customize plots in Python and how to interpret them in psychological research.
+
+---
